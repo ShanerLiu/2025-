@@ -15,8 +15,7 @@ AVX512的VPROLD和VPTERNLOGD指令优化线形层运算。
 # 4.利用AES-NI加速SM4
 **域同构原理**：SM4与AES的S盒均基于有限域GF(2^8)逆运算，通过同构映射SBox_SM4(x)=(x·A₁+C₁)⁻¹·A₂+C₂，可将SM4的S盒运算转换为AES-NI支持的操作。  
 ![isomorphic](https://github.com/ShanerLiu/2025-/blob/main/png/%E5%90%8C%E6%9E%84.png)  
-# 5.性能对比数据
-
+# 5.性能数据对比
 
 
 
