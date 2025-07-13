@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <immintrin.h>
-#include <cstring>  // Ìí¼ÓÈ±ÉÙµÄÍ·ÎÄ¼ş
+#include <cstring>  
 
 using namespace std;
 using namespace chrono;
@@ -50,13 +50,13 @@ vector<uint8_t> pad(const vector<uint8_t>& msg) {
     return padded;
 }
 
-// ½«ROUNDºê¸ÄÎªÄÚÁªº¯Êı£¬±ÜÃâ±äÁ¿ÖØ¸´¶¨Òå
+// å°†ROUNDå®æ”¹ä¸ºå†…è”å‡½æ•°ï¼Œé¿å…å˜é‡é‡å¤å®šä¹‰
 inline void round_function(uint32_t& A, uint32_t& B, uint32_t& C, uint32_t& D,
     uint32_t& E, uint32_t& F, uint32_t& G, uint32_t& H,
     uint32_t W[], uint32_t W1[], int j,
     uint32_t(*FF)(uint32_t, uint32_t, uint32_t),
     uint32_t(*GG)(uint32_t, uint32_t, uint32_t)) {
-    uint32_t SS1 = ROTL32(ROTL32(A, 12) + E + ROTL32(T[j], 7), 7); // ĞŞÕıÎªROTL32(T[j], 7)
+    uint32_t SS1 = ROTL32(ROTL32(A, 12) + E + ROTL32(T[j], 7), 7); // ä¿®æ­£ä¸ºROTL32(T[j], 7)
     uint32_t SS2 = SS1 ^ ROTL32(A, 12);
     uint32_t TT1 = FF(A, B, C) + D + SS2 + W1[j];
     uint32_t TT2 = GG(E, F, G) + H + SS1 + W[j];
@@ -77,10 +77,10 @@ vector<uint8_t> sm3_optimized1(const vector<uint8_t>& msg) {
     memcpy(V, IV, 8 * sizeof(uint32_t));
 
     for (size_t i = 0; i < n; ++i) {
-        uint8_t* block = &padded[i * 64];  // ÖØÃüÃûÎªblock±ÜÃâ³åÍ»
+        uint8_t* block = &padded[i * 64];  // é‡å‘½åä¸ºblocké¿å…å†²çª
         uint32_t W[68], W1[64];
 
-        // ÏûÏ¢À©Õ¹£¨Ñ­»·Õ¹¿ª£©
+        // æ¶ˆæ¯æ‰©å±•ï¼ˆå¾ªç¯å±•å¼€ï¼‰
         W[0] = (block[0] << 24) | (block[1] << 16) | (block[2] << 8) | block[3];
         W[1] = (block[4] << 24) | (block[5] << 16) | (block[6] << 8) | block[7];
         W[2] = (block[8] << 24) | (block[9] << 16) | (block[10] << 8) | block[11];
@@ -105,11 +105,11 @@ vector<uint8_t> sm3_optimized1(const vector<uint8_t>& msg) {
             W1[j] = W[j] ^ W[j + 4];
         }
 
-        // µü´úÑ¹Ëõ£¨Ñ­»·Õ¹¿ª4ÂÖ£©
-        uint32_t A = V[0], b = V[1], C = V[2], D = V[3];  // ½«B¸ÄÎªb±ÜÃâ³åÍ»
+        // è¿­ä»£å‹ç¼©ï¼ˆå¾ªç¯å±•å¼€4è½®ï¼‰
+        uint32_t A = V[0], b = V[1], C = V[2], D = V[3];  // å°†Bæ”¹ä¸ºbé¿å…å†²çª
         uint32_t E = V[4], F = V[5], G = V[6], H = V[7];
 
-        // Ç°16ÂÖ
+        // å‰16è½®
         for (int j = 0; j < 16; j += 4) {
             round_function(A, b, C, D, E, F, G, H, W, W1, j, FF0, GG0);
             round_function(A, b, C, D, E, F, G, H, W, W1, j + 1, FF0, GG0);
@@ -124,7 +124,7 @@ vector<uint8_t> sm3_optimized1(const vector<uint8_t>& msg) {
         }
 
         V[0] ^= A;
-        V[1] ^= b;  // Ê¹ÓÃĞ¡Ğ´b
+        V[1] ^= b;  // ä½¿ç”¨å°å†™b
         V[2] ^= C;
         V[3] ^= D;
         V[4] ^= E;
@@ -153,7 +153,7 @@ int main() {
 
     duration<double> elapsed = end - start;
     double throughput = data_size / (1024.0 * 1024.0) / elapsed.count();
-    cout << "Ñ­»·Õ¹¿ª+¼Ä´æÆ÷ÓÅ»¯ÍÌÍÂÁ¿: " << throughput << " MB/s" << endl;
+    cout << "å¾ªç¯å±•å¼€+å¯„å­˜å™¨ä¼˜åŒ–ååé‡: " << throughput << " MB/s" << endl;
 
     return 0;
 }
