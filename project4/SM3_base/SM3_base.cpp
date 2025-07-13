@@ -2,18 +2,18 @@
 #include <cstdint>
 #include <vector>
 #include <chrono>
-#include <cstring>  // Ìí¼ÓÈ±Ê§µÄÍ·ÎÄ¼ş
+#include <cstring> 
 
 using namespace std;
 using namespace chrono;
 
-// ³õÊ¼¹şÏ£Öµ
+// åˆå§‹å“ˆå¸Œå€¼
 const uint32_t IV[8] = {
     0x7380166F, 0x4914B2B9, 0x172442D7, 0xDA8A0600,
     0xA96F30BC, 0x163138AA, 0xE38DEE4D, 0xB0FB0E4E
 };
 
-// Tj³£Á¿
+// Tjå¸¸é‡
 const uint32_t T[64] = {
     0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519,
     0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519, 0x79CC4519,
@@ -25,17 +25,17 @@ const uint32_t T[64] = {
     0x7A879D8A, 0x7A879D8A, 0x7A879D8A, 0x7A879D8A, 0x7A879D8A, 0x7A879D8A, 0x7A879D8A, 0x7A879D8A
 };
 
-// Ñ­»·×óÒÆ
+// å¾ªç¯å·¦ç§»
 uint32_t ROTL32(uint32_t x, int n) {
     return (x << n) | (x >> (32 - n));
 }
 
-// P1º¯Êı
+// P1å‡½æ•°
 uint32_t P1(uint32_t x) {
     return x ^ ROTL32(x, 15) ^ ROTL32(x, 23);
 }
 
-// FFº¯Êı
+// FFå‡½æ•°
 uint32_t FF(uint32_t X, uint32_t Y, uint32_t Z, int j) {
     if (0 <= j && j <= 15) {
         return X ^ Y ^ Z;
@@ -45,7 +45,7 @@ uint32_t FF(uint32_t X, uint32_t Y, uint32_t Z, int j) {
     }
 }
 
-// GGº¯Êı
+// GGå‡½æ•°
 uint32_t GG(uint32_t X, uint32_t Y, uint32_t Z, int j) {
     if (0 <= j && j <= 15) {
         return X ^ Y ^ Z;
@@ -55,7 +55,7 @@ uint32_t GG(uint32_t X, uint32_t Y, uint32_t Z, int j) {
     }
 }
 
-// Ìî³äº¯Êı
+// å¡«å……å‡½æ•°
 vector<uint8_t> pad(const vector<uint8_t>& msg) {
     size_t l = msg.size() * 8;
     size_t k = (448 - l - 1) % 512;
@@ -69,7 +69,7 @@ vector<uint8_t> pad(const vector<uint8_t>& msg) {
     return padded;
 }
 
-// SM3¹şÏ£º¯Êı
+// SM3å“ˆå¸Œå‡½æ•°
 vector<uint8_t> sm3(const vector<uint8_t>& msg) {
     vector<uint8_t> padded = pad(msg);
     size_t n = padded.size() / 64;
@@ -77,10 +77,10 @@ vector<uint8_t> sm3(const vector<uint8_t>& msg) {
     memcpy(V, IV, 8 * sizeof(uint32_t));
 
     for (size_t i = 0; i < n; ++i) {
-        uint8_t* block = &padded[i * 64];  // ÖØÃüÃûÏûÏ¢¿éÖ¸ÕëÎªblock
+        uint8_t* block = &padded[i * 64];  // é‡å‘½åæ¶ˆæ¯å—æŒ‡é’ˆä¸ºblock
         uint32_t W[68], W1[64];
 
-        // ÏûÏ¢À©Õ¹
+        // æ¶ˆæ¯æ‰©å±•
         for (int j = 0; j < 16; ++j) {
             W[j] = (block[j * 4] << 24) | (block[j * 4 + 1] << 16) | (block[j * 4 + 2] << 8) | block[j * 4 + 3];
         }
@@ -91,7 +91,7 @@ vector<uint8_t> sm3(const vector<uint8_t>& msg) {
             W1[j] = W[j] ^ W[j + 4];
         }
 
-        // µü´úÑ¹Ëõ
+        // è¿­ä»£å‹ç¼©
         uint32_t A = V[0], B = V[1], C = V[2], D = V[3];
         uint32_t E = V[4], F = V[5], G = V[6], H = V[7];
         for (int j = 0; j < 64; ++j) {
@@ -118,7 +118,7 @@ vector<uint8_t> sm3(const vector<uint8_t>& msg) {
         V[7] ^= H;
     }
 
-    // Êä³ö¹şÏ£Öµ
+    // è¾“å‡ºå“ˆå¸Œå€¼
     vector<uint8_t> hash(32);
     for (int i = 0; i < 8; ++i) {
         hash[i * 4] = (V[i] >> 24) & 0xFF;
@@ -130,7 +130,7 @@ vector<uint8_t> sm3(const vector<uint8_t>& msg) {
 }
 
 int main() {
-    // ²âÊÔÊı¾İ´óĞ¡£º100MB
+    // æµ‹è¯•æ•°æ®å¤§å°ï¼š100MB
     const size_t data_size = 100 * 1024 * 1024;
     vector<uint8_t> data(data_size, 0xAA);
 
@@ -140,7 +140,7 @@ int main() {
 
     duration<double> elapsed = end - start;
     double throughput = data_size / (1024.0 * 1024.0) / elapsed.count();
-    cout << "»ù´¡ÊµÏÖÍÌÍÂÁ¿: " << throughput << " MB/s" << endl;
+    cout << "åŸºç¡€å®ç°ååé‡: " << throughput << " MB/s" << endl;
 
     return 0;
 }
