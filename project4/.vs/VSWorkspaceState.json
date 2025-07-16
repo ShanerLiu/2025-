@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\SM3_unroll_and_reg"
   ],
+  "SelectedNode": "\\SM3_unroll_and_reg\\SM3_unroll_and_reg.cpp",
   "PreviewInSolutionExplorer": false
 }
