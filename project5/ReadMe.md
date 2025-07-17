@@ -41,6 +41,30 @@
 **验签阶段避免模拟操作**：通过直接验证X=(r-e)*Z^2 mod p，减少一次模逆计算。      
 # 三、核心代码实现   
 ## 3.1 蒙哥马利大数运算模块    
+实现蒙哥马利约简与模乘，将256比特模乘从“乘法+模约”转化为“乘法+加法”，减少模操作开销。      
+![1_1](https://github.com/ShanerLiu/2025-/blob/main/png/mgml_1.png)      
+基于二进制扩展欧几里得算法实现模逆，支持常量时间运算，适配SM2素域运算需求。      
+## 3.2 椭圆曲线点运算核心优化     
+**add_co_z**:实现Co-Z点加，利用两点Z坐标相同的特性，将点加计算复杂度从12M+4S降至5M+2S。      
+![co-z](https://github.com/ShanerLiu/2025-/blob/main/png/co_z.png)      
+**fixed_point_mul**：基于预计算表与窗口优化固定点（如G）点乘，通过预存G的倍数点减少在线计算量。     
+![fixed](https://github.com/ShanerLiu/2025-/blob/main/png/2_2.png)        
+**mul**:结合NAF编码（减少非零比特数）与预计算表优化非固定点点乘。        
+![mul](https://github.com/ShanerLiu/2025-/blob/main/png/2_3.png)        
+## 3.3 签名与验签协议    
+**sign**：结合优化的固定点点乘与蒙哥马利模逆，提升签名效率，符合SM2签名流程。    
+![sign](https://github.com/ShanerLiu/2025-/blob/main/png/3_1.png)       
+**verify**：通过fixed_point_mul和add_co_z优化点运算，之间验证(e+x1) mod n==r，避免模逆操作，提升验签效率。      
+![verify](https://github.com/ShanerLiu/2025-/blob/main/png/3_2.png)        
+<dr/>       
+# 四、实验结果    
+|        |  大数运算（100次） |  点运算（100次）| 签名验签（100次） |
+| :----: | :-------------:  |  :----------: |  :---------: | 
+|SM2基础软件实现| 0.0086s | 0.0571s | 10.8487s |  
+|SM2优化后| 0.0084s | 0.0294s | 2.8733s |  
+![base_result](https://github.com/ShanerLiu/2025-/blob/main/png/SM2_base.png)        
+![op](https://github.com/ShanerLiu/2025-/blob/main/png/SM2_optimized.png)     
+
 
 
 
