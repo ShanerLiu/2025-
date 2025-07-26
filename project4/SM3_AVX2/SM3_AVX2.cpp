@@ -9,7 +9,7 @@
 using namespace std;
 using namespace chrono;
 
-// ³£Á¿¶¨Òå£¨AVX2ÏòÁ¿ĞÎÊ½£©
+// å¸¸é‡å®šä¹‰ï¼ˆAVX2å‘é‡å½¢å¼ï¼‰
 const __m256i T0 = _mm256_set1_epi32(0x79cc4519);
 const __m256i T1 = _mm256_set1_epi32(0x7a879d8a);
 const __m256i IV_vec = _mm256_set_epi32(
@@ -17,7 +17,7 @@ const __m256i IV_vec = _mm256_set_epi32(
     0xda8a0600, 0x172442d7, 0x4914b2b9, 0x7380166f
 );
 
-// Ñ­»·×óÒÆ£¨32Î»£©
+// å¾ªç¯å·¦ç§»ï¼ˆ32ä½ï¼‰
 inline __m256i rotl32_epi32(__m256i x, int n) {
     return _mm256_or_si256(
         _mm256_slli_epi32(x, n),
@@ -25,7 +25,7 @@ inline __m256i rotl32_epi32(__m256i x, int n) {
     );
 }
 
-// P1ÖÃ»»£¨ÏòÁ¿»¯£©
+// P1ç½®æ¢ï¼ˆå‘é‡åŒ–ï¼‰
 inline __m256i P1_vec(__m256i x) {
     return _mm256_xor_si256(
         _mm256_xor_si256(x, rotl32_epi32(x, 15)),
@@ -33,13 +33,13 @@ inline __m256i P1_vec(__m256i x) {
     );
 }
 
-// ÏûÏ¢À©Õ¹ÓÅ»¯£¨ÏòÁ¿»¯´¦Àí£©
+// æ¶ˆæ¯æ‰©å±•ä¼˜åŒ–ï¼ˆå‘é‡åŒ–å¤„ç†ï¼‰
 inline void msg_extend_avx2(__m256i* W, const __m256i* block) {
-    // ¼ÓÔØ³õÊ¼16¸ö×Ö£¨·Ö4¸ö256Î»ÏòÁ¿£©
+    // åŠ è½½åˆå§‹16ä¸ªå­—ï¼ˆåˆ†4ä¸ª256ä½å‘é‡ï¼‰
     W[0] = block[0];  // W0-W7
     W[1] = block[1];  // W8-W15
 
-    // Éú³ÉW16-W67£¨ÏòÁ¿»¯ÅúÁ¿¼ÆËã£©
+    // ç”ŸæˆW16-W67ï¼ˆå‘é‡åŒ–æ‰¹é‡è®¡ç®—ï¼‰
     for (int j = 16; j < 68; j += 8) {
         __m256i w16 = _mm256_xor_si256(
             _mm256_xor_si256(W[(j - 16) / 8], W[(j - 9) / 8]),
@@ -54,9 +54,9 @@ inline void msg_extend_avx2(__m256i* W, const __m256i* block) {
     }
 }
 
-// Ñ¹Ëõº¯ÊıÓÅ»¯£¨AVX2ÏòÁ¿²¢ĞĞ£©
+// å‹ç¼©å‡½æ•°ä¼˜åŒ–ï¼ˆAVX2å‘é‡å¹¶è¡Œï¼‰
 inline void compress_avx2(__m256i& state, const __m256i* W, const __m256i* W1) {
-    // ĞŞÕı¹¤×÷±äÁ¿³õÊ¼»¯
+
     __m256i A = _mm256_inserti128_si256(_mm256_castsi128_si256(_mm256_extracti128_si256(state, 1)), _mm256_extracti128_si256(state, 1), 1);
     __m256i B = _mm256_inserti128_si256(_mm256_castsi128_si256(_mm256_extracti128_si256(state, 1)), _mm256_extracti128_si256(state, 1), 1);
     __m256i C = state;
@@ -66,7 +66,7 @@ inline void compress_avx2(__m256i& state, const __m256i* W, const __m256i* W1) {
     __m256i G = _mm256_shuffle_epi32(state, _MM_SHUFFLE(1, 0, 3, 2));
     __m256i H = _mm256_shuffle_epi32(state, _MM_SHUFFLE(0, 1, 2, 3));
 
-    // Ç°16ÂÖ£¨²¢ĞĞ´¦Àí4×é£©
+    // å‰16è½®ï¼ˆå¹¶è¡Œå¤„ç†4ç»„ï¼‰
     for (int j = 0; j < 16; j += 4) {
         __m256i T = T0;
         __m256i ss1 = rotl32_epi32(
@@ -85,7 +85,7 @@ inline void compress_avx2(__m256i& state, const __m256i* W, const __m256i* W1) {
             _mm256_add_epi32(ss1, W[j / 4])
         );
 
-        // ¸üĞÂ¹¤×÷±äÁ¿£¨Ñ­»·Õ¹¿ª£©
+        // æ›´æ–°å·¥ä½œå˜é‡ï¼ˆå¾ªç¯å±•å¼€ï¼‰
         D = C;
         C = rotl32_epi32(B, 9);
         B = A;
@@ -96,7 +96,7 @@ inline void compress_avx2(__m256i& state, const __m256i* W, const __m256i* W1) {
         E = P1_vec(tt2);
     }
 
-    // ºó48ÂÖ£¨²¢ĞĞ´¦Àí4×é£©
+    // å48è½®ï¼ˆå¹¶è¡Œå¤„ç†4ç»„ï¼‰
     for (int j = 16; j < 64; j += 4) {
         __m256i T = T1;
         __m256i ss1 = rotl32_epi32(
@@ -123,7 +123,7 @@ inline void compress_avx2(__m256i& state, const __m256i* W, const __m256i* W1) {
             _mm256_add_epi32(ss1, W[j / 4])
         );
 
-        // ¸üĞÂ¹¤×÷±äÁ¿£¨Ñ­»·Õ¹¿ª£©
+        // æ›´æ–°å·¥ä½œå˜é‡ï¼ˆå¾ªç¯å±•å¼€ï¼‰
         D = C;
         C = rotl32_epi32(B, 9);
         B = A;
@@ -134,19 +134,19 @@ inline void compress_avx2(__m256i& state, const __m256i* W, const __m256i* W1) {
         E = P1_vec(tt2);
     }
 
-    // ĞŞÕı×´Ì¬¸üĞÂ
+
     __m128i a_low = _mm256_extracti128_si256(A, 0);
     __m128i a_high = _mm256_extracti128_si256(A, 1);
     __m256i new_state = _mm256_inserti128_si256(_mm256_castsi128_si256(a_low), a_high, 1);
     state = _mm256_xor_si256(state, new_state);
 }
 
-// ÓÅ»¯°æSM3¹şÏ£º¯Êı
+// ä¼˜åŒ–ç‰ˆSM3å“ˆå¸Œå‡½æ•°
 vector<uint8_t> sm3_optimized(const vector<uint8_t>& msg) {
     vector<uint8_t> data = msg;
     size_t len = data.size() * 8;
 
-    // Ìî³ä£¨Óë±ê×¼ÊµÏÖÏàÍ¬£©
+    // å¡«å……ï¼ˆä¸æ ‡å‡†å®ç°ç›¸åŒï¼‰
     data.push_back(0x80);
     while ((data.size() * 8) % 512 != 448) {
         data.push_back(0x00);
@@ -155,31 +155,31 @@ vector<uint8_t> sm3_optimized(const vector<uint8_t>& msg) {
         data.push_back((len >> (i * 8)) & 0xff);
     }
 
-    // ³õÊ¼»¯×´Ì¬£¨AVX2ÏòÁ¿£©
+    // åˆå§‹åŒ–çŠ¶æ€ï¼ˆAVX2å‘é‡ï¼‰
     __m256i state = IV_vec;
 
-    // °´512±ÈÌØ·Ö×é´¦Àí£¨Ê¹ÓÃAVX2ÅúÁ¿´¦Àí£©
-    __m256i block[2];  // Ã¿¸öblock°üº¬16¸ö32Î»×Ö£¨2¸ö256Î»ÏòÁ¿£©
-    __m256i W[9], W1[8];  // ÏûÏ¢À©Õ¹Êı×é£¨ÏòÁ¿»¯£©
+    // æŒ‰512æ¯”ç‰¹åˆ†ç»„å¤„ç†ï¼ˆä½¿ç”¨AVX2æ‰¹é‡å¤„ç†ï¼‰
+    __m256i block[2];  // æ¯ä¸ªblockåŒ…å«16ä¸ª32ä½å­—ï¼ˆ2ä¸ª256ä½å‘é‡ï¼‰
+    __m256i W[9], W1[8];  // æ¶ˆæ¯æ‰©å±•æ•°ç»„ï¼ˆå‘é‡åŒ–ï¼‰
 
     for (size_t i = 0; i < data.size(); i += 64) {
-        // ¼ÓÔØÊı¾İµ½AVX2¼Ä´æÆ÷
+        // åŠ è½½æ•°æ®åˆ°AVX2å¯„å­˜å™¨
         block[0] = _mm256_loadu_si256((const __m256i*)(data.data() + i));
         block[1] = _mm256_loadu_si256((const __m256i*)(data.data() + i + 32));
 
-        // ÏûÏ¢À©Õ¹
+        // æ¶ˆæ¯æ‰©å±•
         msg_extend_avx2(W, block);
 
-        // Éú³ÉW1
+        // ç”ŸæˆW1
         for (int j = 0; j < 8; j++) {
             W1[j] = _mm256_xor_si256(W[j], W[j + 1]);
         }
 
-        // Ñ¹Ëõ
+        // å‹ç¼©
         compress_avx2(state, W, W1);
     }
 
-    // ÌáÈ¡½á¹û
+    // æå–ç»“æœ
     uint32_t state_arr[8];
     _mm256_storeu_si256((__m256i*)state_arr, state);
 
@@ -193,10 +193,10 @@ vector<uint8_t> sm3_optimized(const vector<uint8_t>& msg) {
     return result;
 }
 
-// ÓÅ»¯°æĞÔÄÜ²âÊÔ
+// ä¼˜åŒ–ç‰ˆæ€§èƒ½æµ‹è¯•
 double testSM3OptimizedPerformance(size_t dataSize) {
     vector<uint8_t> data(dataSize, 0x5a);
-    const int iterations = 20;  // ¸ü¶àµü´ú´ÎÊıÌá¸ß¾«¶È
+    const int iterations = 20;  // æ›´å¤šè¿­ä»£æ¬¡æ•°æé«˜ç²¾åº¦
 
     auto start = high_resolution_clock::now();
     for (int i = 0; i < iterations; i++) {
@@ -211,19 +211,19 @@ double testSM3OptimizedPerformance(size_t dataSize) {
 }
 
 int main() {
-    // ²âÊÔÓÅ»¯°æĞÔÄÜ
-    size_t testSize = 1024 * 1024;  // 1MB²âÊÔÊı¾İ
+    // æµ‹è¯•ä¼˜åŒ–ç‰ˆæ€§èƒ½
+    size_t testSize = 1024 * 1024;  // 1MBæµ‹è¯•æ•°æ®
     double speed = testSM3OptimizedPerformance(testSize);
-    cout << "AVX2ÓÅ»¯ÊµÏÖĞÔÄÜ: " << fixed << setprecision(2) << speed << " MB/s" << endl;
+    cout << "AVX2ä¼˜åŒ–å®ç°æ€§èƒ½: " << fixed << setprecision(2) << speed << " MB/s" << endl;
 
-    // ÑéÖ¤ÕıÈ·ĞÔ
+    // éªŒè¯æ­£ç¡®æ€§
     vector<uint8_t> emptyMsg;
     vector<uint8_t> hash = sm3_optimized(emptyMsg);
     stringstream ss;
     for (uint8_t b : hash) {
         ss << hex << setw(2) << setfill('0') << (int)b;
     }
-    cout << "¿ÕÏûÏ¢¹şÏ£Öµ: " << ss.str() << endl;
+    cout << "ç©ºæ¶ˆæ¯å“ˆå¸Œå€¼: " << ss.str() << endl;
 
     return 0;
 }
