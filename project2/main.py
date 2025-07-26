@@ -7,10 +7,9 @@ import matplotlib.pyplot as plt
 from scipy.fft import fft2, ifft2, fftshift, ifftshift
 from watermarking import WatermarkSystem
 from robustness_tests import RobustnessTester
-# 在main.py或watermarking.py文件开头添加
 import matplotlib.pyplot as plt
 plt.rcParams["font.family"] = ["SimHei"]
-plt.rcParams["axes.unicode_minus"] = False  # 确保负号正确显示
+plt.rcParams["axes.unicode_minus"] = False  
 
 def main():
     # 初始化水印系统
