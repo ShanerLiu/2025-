@@ -1,4 +1,3 @@
-# create_leaked_hashes.py (需自行创建)
 from password_util import generate_password_hash_file
 
 # 泄露密码列表
