@@ -94,13 +94,13 @@ static void thread_encrypt(const uint32_t* rk, uint32_t* plain, int start_idx, i
 
 // 多线程加密
 void sm4_encrypt_multithread(const uint32_t* rk, uint32_t* plain, int size) {
-    clock_t start_time = clock();  // 重命名避免冲突
+    clock_t start_time = clock();  
     std::vector<std::thread> threads;
     int block_per_thread = (size + THREAD_NUM - 1) / THREAD_NUM;
     
     // 启动线程
     for (int t = 0; t < THREAD_NUM; t++) {
-        int start_idx = t * block_per_thread;  // 重命名避免冲突
+        int start_idx = t * block_per_thread;  
         int end_idx = (t + 1) * block_per_thread;
         if (end_idx > size) end_idx = size;
         threads.emplace_back(thread_encrypt, rk, plain, start_idx, end_idx);
@@ -111,7 +111,7 @@ void sm4_encrypt_multithread(const uint32_t* rk, uint32_t* plain, int size) {
         th.join();
     }
     
-    clock_t end_time = clock();  // 重命名避免冲突
+    clock_t end_time = clock();  
     double time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     printf("多线程SM4用时: %f 秒\n", time);
 }
