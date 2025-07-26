@@ -10,5 +10,5 @@ GitHub用户名：ShanerLiu
 # 实验环境：  
 Visual Studio Code；PyCharm Community Edition 2024.3.4  
 # 文档说明
-每个文件夹包含当前project文档以及配套代码，**课程内容均为本人独立完成**。     
+每个文件夹包含当前project文档以及配套代码，**实验内容均为本人独立完成**。     
 
