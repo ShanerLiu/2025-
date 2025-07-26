@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <time.h>  // 替换windows.h
+#include <time.h>  
 
 #define m_bits 10000000  // 测试数据量
 
