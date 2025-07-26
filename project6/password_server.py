@@ -82,8 +82,7 @@ class PasswordServer:
 
 # 示例使用
 if __name__ == "__main__":
-    # 假设我们有一个泄露密码哈希的文件
-    # 实际应用中应从安全的数据源加载
+
     leaked_passwords = [
         b"leaked_password_hash",
         b"another_leaked_hash"
