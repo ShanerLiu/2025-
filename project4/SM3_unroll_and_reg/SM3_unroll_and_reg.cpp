@@ -50,13 +50,13 @@ vector<uint8_t> pad(const vector<uint8_t>& msg) {
     return padded;
 }
 
-// 将ROUND宏改为内联函数，避免变量重复定义
+// 将ROUND宏改为内联函数
 inline void round_function(uint32_t& A, uint32_t& B, uint32_t& C, uint32_t& D,
     uint32_t& E, uint32_t& F, uint32_t& G, uint32_t& H,
     uint32_t W[], uint32_t W1[], int j,
     uint32_t(*FF)(uint32_t, uint32_t, uint32_t),
     uint32_t(*GG)(uint32_t, uint32_t, uint32_t)) {
-    uint32_t SS1 = ROTL32(ROTL32(A, 12) + E + ROTL32(T[j], 7), 7); // 修正为ROTL32(T[j], 7)
+    uint32_t SS1 = ROTL32(ROTL32(A, 12) + E + ROTL32(T[j], 7), 7); // ROTL32(T[j], 7)
     uint32_t SS2 = SS1 ^ ROTL32(A, 12);
     uint32_t TT1 = FF(A, B, C) + D + SS2 + W1[j];
     uint32_t TT2 = GG(E, F, G) + H + SS1 + W[j];
@@ -77,7 +77,7 @@ vector<uint8_t> sm3_optimized1(const vector<uint8_t>& msg) {
     memcpy(V, IV, 8 * sizeof(uint32_t));
 
     for (size_t i = 0; i < n; ++i) {
-        uint8_t* block = &padded[i * 64];  // 重命名为block避免冲突
+        uint8_t* block = &padded[i * 64];  
         uint32_t W[68], W1[64];
 
         // 消息扩展（循环展开）
@@ -106,7 +106,7 @@ vector<uint8_t> sm3_optimized1(const vector<uint8_t>& msg) {
         }
 
         // 迭代压缩（循环展开4轮）
-        uint32_t A = V[0], b = V[1], C = V[2], D = V[3];  // 将B改为b避免冲突
+        uint32_t A = V[0], b = V[1], C = V[2], D = V[3]; 
         uint32_t E = V[4], F = V[5], G = V[6], H = V[7];
 
         // 前16轮
@@ -124,7 +124,7 @@ vector<uint8_t> sm3_optimized1(const vector<uint8_t>& msg) {
         }
 
         V[0] ^= A;
-        V[1] ^= b;  // 使用小写b
+        V[1] ^= b;  
         V[2] ^= C;
         V[3] ^= D;
         V[4] ^= E;
