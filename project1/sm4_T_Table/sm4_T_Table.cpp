@@ -77,7 +77,7 @@ static void sm4_key_expansion(const uint32_t* key, uint32_t* rk) {
     for (int i = 0; i < 4; i++) k[i] = key[i] ^ fk[i];
     for (int i = 0; i < 32; i++) {
         uint32_t temp = k[i+1] ^ k[i+2] ^ k[i+3] ^ ck[i];
-        // 修改：使用强制类型转换解决缩窄转换问题
+
         uint8_t b[4] = { 
             static_cast<uint8_t>((temp>>24)&0xFF),
             static_cast<uint8_t>((temp>>16)&0xFF),
