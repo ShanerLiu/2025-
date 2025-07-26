@@ -77,7 +77,7 @@ vector<uint8_t> sm3(const vector<uint8_t>& msg) {
     memcpy(V, IV, 8 * sizeof(uint32_t));
 
     for (size_t i = 0; i < n; ++i) {
-        uint8_t* block = &padded[i * 64];  // 重命名消息块指针为block
+        uint8_t* block = &padded[i * 64]; 
         uint32_t W[68], W1[64];
 
         // 消息扩展
