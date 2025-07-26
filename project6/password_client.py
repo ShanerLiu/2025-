@@ -55,10 +55,10 @@ class PasswordClient:
 
 # 示例使用
 if __name__ == "__main__":
-    # 假设我们已经有了用户密码的哈希值
+    
     user_passwords = [
         b"user_password_hash_1",
-        b"leaked_password_hash"  # 假设这是一个泄露的密码哈希
+        b"leaked_password_hash"  
     ]
 
     client = PasswordClient("localhost", 12345)
