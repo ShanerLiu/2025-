@@ -1,8 +1,6 @@
-# 山东大学2025网络空间安全创新创业实践
+# 山东大学网络空间安全创新创业实践
 姓名：刘一璇    
-GitHub用户名：ShanerLiu  
-学号：202200460073  
-班级：2022级网安2班  
+GitHub用户名：ShanerLiu   
 
 # 硬件环境：  
 操作系统：Windos11  
@@ -10,5 +8,5 @@ GitHub用户名：ShanerLiu
 # 实验环境：  
 Visual Studio Code；PyCharm Community Edition 2024.3.4  
 # 文档说明
-每个文件夹包含当前project文档以及配套代码，**实验内容均为本人独立完成**。     
+每个文件夹包含当前project文档以及配套代码，**实践内容均为本人独立完成**。     
 
